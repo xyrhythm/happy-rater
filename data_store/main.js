@@ -3,13 +3,12 @@ var mysql = require('mysql');
 
 var eventEmitter = new events.EventEmitter();
 
-// TODO(fenghaolw): Connect to a real server instead of localhost.
-// TODO(fenghaolw): Document how to setup a local mysql instance.
 var con = mysql.createConnection({
-  host: 'localhost',
-  user: 'testuser',
-  password: 'password',
-  database: 'mydb'
+  host: 'rater-dev.cwvjfre1hpn6.us-west-1.rds.amazonaws.com',
+  port: 3306,
+  user: 'ratermaster',
+  password: '',
+  database: 'happyrater'
 });
 
 con.connect(function(err) {
