@@ -1,9 +1,9 @@
-var events = require('events');
-var mysql = require('mysql');
+const events = require('events');
+const mysql = require('mysql');
 
-var eventEmitter = new events.EventEmitter();
+const eventEmitter = new events.EventEmitter();
 
-var con = mysql.createConnection({
+const con = mysql.createConnection({
   host: 'rater-dev.cwvjfre1hpn6.us-west-1.rds.amazonaws.com',
   port: 3306,
   user: 'ratermaster',
@@ -17,39 +17,53 @@ con.connect(function(err) {
   console.log('Connected!');
 });
 
-var querySql = function(sql) {
+const querySql = function(sql) {
   con.query(sql, function(err, result) {
     if (err) throw err;
     console.log('Inserted one entry.');
   });
-}
-
-var quoteStr = function(str) {
-  return '\'' + str + '\'';
-}
+};
 
 // TODO(fenghaolw): All of these should support batch updates.
-var AddTask = function(type) {
-  var sql = 'INSERT INTO tasks (type) VALUES (\'' + type + '\');';
-  querySql(sql);
-}
-
-var AddRater = function(rater_id, first_name, last_name) {
-  var sql = 'INSERT INTO raters (id, first_name, last_name) VALUES ('
-      + [rater_id, quoteStr(first_name), quoteStr(last_name)].join(',') + ');';
-  querySql(sql);
+// entry is a ES6 Map
+const InsertEntry = function(table_name, entry) {
+  // Print the entry for debugging
+  console.log(entry);
+  const fields = Array.from(entry.keys()).join(',');
+  const values = Array.from(entry.values()).join(',');
+  querySql(`INSERT INTO ${table_name} (${fields}) VALUES (${values});`);
 };
 
-var AddQuestion = function(question_id, description, image_url, task_id) {
-  var sql = 'INSERT INTO questions (id, task_id, description, image_url) VALUES ('
-      + [question_id, task_id, quoteStr(description), quoteStr(image_url)].join(',') + ');';
-  querySql(sql);
+const AddTask = function(type) {
+  const entry = new Map();
+  entry.set('type', type);
+  InsertEntry('task', entry);
 };
 
-var AddRecord = function(record_id, rater_id, question_id, response) {
-  var sql = 'INSERT INTO records (id, rater_id, question_id, response) VALUES ('
-      + [record_id, rater_id, question_id, quoteStr(response)].join(',') + ');';
-  querySql(sql);
+const AddRater = function(rater_id, first_name, last_name) {
+  const entry = new Map();
+  entry.set('id', rater_id);
+  entry.set('first_name', `'${first_name}'`);
+  entry.set('last_name', `'${last_name}'`);
+  InsertEntry('rater', entry);
+};
+
+const AddQuestion = function(question_id, description, image_url, task_id) {
+  const entry = new Map();
+  entry.set('id', question_id);
+  entry.set('task_id', task_id);
+  entry.set('description', `'${description}'`);
+  entry.set('image_url', `'${image_url}'`);
+  InsertEntry('question', entry);
+};
+
+const AddRecord = function(record_id, rater_id, question_id, response) {
+  const entry = new Map();
+  entry.set('id', record_id);
+  entry.set('rater_id', rater_id);
+  entry.set('question_id', question_id);
+  entry.set('response', `'${response}'`);
+  InsertEntry('record', entry);
 };
 
 eventEmitter.on('AddTask', AddTask);
