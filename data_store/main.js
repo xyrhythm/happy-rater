@@ -7,6 +7,7 @@ var con = mysql.createConnection({
   host: 'rater-dev.cwvjfre1hpn6.us-west-1.rds.amazonaws.com',
   port: 3306,
   user: 'ratermaster',
+  // TODO(gillwang): find a way to solve the password leak issue of mysql.
   password: '',
   database: 'happyrater'
 });
