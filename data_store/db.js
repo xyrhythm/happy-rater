@@ -1,7 +1,4 @@
-const events = require('events');
 const mysql = require('mysql');
-
-const eventEmitter = new events.EventEmitter();
 
 const con = mysql.createConnection({
   host: 'rater-dev.cwvjfre1hpn6.us-west-1.rds.amazonaws.com',
@@ -16,10 +13,10 @@ con.connect(function(err) {
   if (err) {
     throw err;
   }
-  console.log('Connected!');
+  console.log('Connected to MySQL!');
 });
 
-function querySql(sql, msg) {
+function querySql(sql, msg, callback) {
   con.query(sql, function(err, result) {
     if (err) {
       throw err;
@@ -27,7 +24,15 @@ function querySql(sql, msg) {
     if (msg) {
       console.log(msg);
     }
-    console.log(result);
+    if (callback) {
+      callback(result);
+    }
+  });
+}
+
+function viewTable(tableName, callback) {
+  querySql(`SELECT * FROM ${tableName} LIMIT 100`, '', function(result) {
+    callback(result);
   });
 }
 
@@ -89,14 +94,9 @@ function addAnswer(id, questionId, raterId, answer) {
   insertEntry('answer', entry);
 }
 
-eventEmitter.on('AddRater', addRater);
-eventEmitter.on('AddRequester', addRequester);
-eventEmitter.on('AddTask', addTask);
-eventEmitter.on('AddQuestion', addQuestion);
-eventEmitter.on('AddAnswer', addAnswer);
-
 exports.addRater = addRater;
 exports.addRequester = addRequester;
 exports.addTask = addTask;
 exports.addQuestion = addQuestion;
 exports.addAnswer = addAnswer;
+exports.viewTable = viewTable;

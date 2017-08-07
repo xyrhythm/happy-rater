@@ -1,6 +1,10 @@
 # happy-rater
 ML Training Data Labeling Tool
 
+## Required packages
+
+    $ npm install --save_dev formidable express mysql
+
 ## Setup ESLint
 Use Google's Javascript guide rules as a baseline.
 

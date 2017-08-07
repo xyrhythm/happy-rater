@@ -7,8 +7,10 @@
     "sourceType": "module",
   },
   "rules": {
-    # Disable rules for jsdoc.
+    "no-unused-vars": "off",
+    "linebreak-style": "off",
+    # Disable rules or jsdoc.
     "require-jsdoc": "off",
-    "valid-jsdoc": "off"
+    "valid-jsdoc": "off",
   }
 }
