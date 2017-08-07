@@ -1,0 +1,14 @@
+{
+  # Use google's config as a baseline.
+  "extends": "eslint-config-google",
+  "parserOptions": {
+    # Allow ES6 syntax and node modules.
+    "ecmaVersion": 6,
+    "sourceType": "module",
+  },
+  "rules": {
+    # Disable rules for jsdoc.
+    "require-jsdoc": "off",
+    "valid-jsdoc": "off"
+  }
+}
