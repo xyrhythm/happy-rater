@@ -6,16 +6,10 @@ const db = require('../data_store/db');
 
 // TODO(fenghaolw): Figure out ACLs for urls.
 app = express();
-app.get('/', function(req, res) {
-  serveStaticFile('server/index.html', 'text/html', res);
-});
-
-app.get('/content.js', function(req, res) {
-  serveStaticFile('server/content.js', 'javascript', res);
-});
+app.use(express.static('web'));
 
 app.get('/showRater', function(req, res) {
-  db.viewTable('rater', function(result) {
+  db.viewTable('rater', function(err, result) {
     res.writeHead(200, {
       'Content-Type': 'text/plain',
     });
@@ -27,26 +21,21 @@ app.get('/showRater', function(req, res) {
 app.post('/addRater', function(req, res) {
   let form = new formidable.IncomingForm();
   form.parse(req, function(err, fields, files) {
-    // TODO(fenghaolw): We probably can use a common API insertEntry
-    db.addRater(fields.rater_id, fields.rater_account, fields.rater_nickname);
-    res.end();
+    db.insertEntry('rater', buildMap(fields), (err, result) => {
+      if (err) {
+        // TODO(fenghaolw): provide better error message.
+        res.writeHead(500);
+      }
+      res.end();
+    });
   });
 });
 
-function serveStaticFile(filePath, contentType, response) {
-  fs.readFile(filePath, function(err, content) {
-    if (err) {
-      response.writeHead(404);
-      console.log(err);
-      response.end();
-      return;
-    }
-    response.writeHead(200, {
-      'Content-Type': contentType,
-    });
-    response.write(content);
-    response.end();
-  });
+// Convert a regular JS object to a ES6 map.
+// Always quote the values to avoid SQL syntax errors.
+function buildMap(obj) {
+  return Object.keys(obj).reduce(
+    (map, key) => map.set(key, `'${obj[key]}'`), new Map());
 }
 
 const server = app.listen(8080, function() {
