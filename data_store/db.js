@@ -32,13 +32,18 @@ function viewTable(tableName, callback) {
 // TODO(fenghaolw): All of these should support batch updates.
 // entry is a ES6 Map
 function insertEntry(tableName, entry, callback) {
-  // Print the entry for debugging
-  console.log(entry);
   const fields = Array.from(entry.keys()).join(',');
   const values = Array.from(entry.values()).join(',');
   querySql(`INSERT INTO ${tableName} (${fields}) VALUES (${values});`,
     callback);
 }
 
+function deleteEntry(tableName, entry, callback) {
+  // TODO: don't hard-code rater_id.
+  const sql = `DELETE FROM ${tableName} WHERE rater_id=${entry.rater_id};`;
+  querySql(sql, callback);
+}
+
 exports.insertEntry = insertEntry;
+exports.deleteEntry = deleteEntry;
 exports.viewTable = viewTable;

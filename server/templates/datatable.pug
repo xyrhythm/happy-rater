@@ -1,0 +1,25 @@
+table
+  thead
+    tr
+      th ID
+      th Account
+      th Nickname
+      th
+  tbody
+    each rater in raters
+      tr
+        td= rater.rater_id
+        td= rater.rater_account
+        td= rater.rater_nickname
+        td
+          button(class="delete-rater") DeleteRater
+  tfoot
+    tr
+      td
+        input(type="text" id="rater-id-input")
+      td
+        input(type="text" id="rater-account-input")
+      td
+        input(type="text" id="rater-nickname-input")
+      td
+        button(id="add-rater") AddRater

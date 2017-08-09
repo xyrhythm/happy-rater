@@ -1,6 +1,6 @@
-const fs = require('fs');
 const formidable = require('formidable');
 const express = require('express');
+const pug = require('pug');
 
 const db = require('../data_store/db');
 
@@ -8,13 +8,19 @@ const db = require('../data_store/db');
 app = express();
 app.use(express.static('web'));
 
+const dataTableRender = pug.compileFile(__dirname + '/templates/datatable.pug');
+
 app.get('/showRater', function(req, res) {
   db.viewTable('rater', function(err, result) {
-    res.writeHead(200, {
-      'Content-Type': 'text/plain',
-    });
-    res.write(JSON.stringify(result));
-    res.end();
+    if (err) {
+      res.writeHead(500);
+      res.end();
+    } else {
+      res.write(dataTableRender({
+        raters: result,
+      }));
+      res.end();
+    }
   });
 });
 
@@ -24,6 +30,20 @@ app.post('/addRater', function(req, res) {
     db.insertEntry('rater', buildMap(fields), (err, result) => {
       if (err) {
         // TODO(fenghaolw): provide better error message.
+        res.writeHead(500);
+      }
+      res.end();
+    });
+  });
+});
+
+app.post('/deleteRater', function(req, res) {
+  let form = new formidable.IncomingForm();
+  form.parse(req, function(err, fields, files) {
+    db.deleteEntry('rater', {
+      rater_id: fields.rater_id,
+    }, (err, result) => {
+      if (err) {
         res.writeHead(500);
       }
       res.end();
