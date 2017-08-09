@@ -9,17 +9,16 @@
 *   @xyrhythm @fenghaolw
 
 # @wyy1991 owns /app/
-/app/   @wyy1991
+/app/   @wyy1991 @xyrhythm
 
 # @xyrhythm owns /data_store/
 /data_store/    @xyrhythm
 
 # @fenghaolw owns /server/
-/server/    @fenghaolw
+/server/    @fenghaolw @xyrhythm
 
 # @fenghaolw owns /web/
-/web/   @fenghaolw
-
+/web/   @fenghaolw @xyrhythm
 
 
 ############################# Below are not used but just examples.
