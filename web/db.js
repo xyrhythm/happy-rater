@@ -5,7 +5,7 @@ const con = mysql.createConnection({
   port: 3306,
   user: 'ratermaster',
   password: '317rater',
-  database: 'happyrater',
+  database: 'happyrater'
 });
 
 con.connect(function(err) {
@@ -33,8 +33,10 @@ function viewTable(tableName, callback) {
 function insertEntry(tableName, entry, callback) {
   const fields = Array.from(entry.keys()).join(',');
   const values = Array.from(entry.values()).join(',');
-  querySql(`INSERT INTO ${tableName} (${fields}) VALUES (${values});`,
-    callback);
+  querySql(
+    `INSERT INTO ${tableName} (${fields}) VALUES (${values});`,
+    callback
+  );
 }
 
 function deleteEntry(tableName, entry, callback) {

@@ -3,10 +3,17 @@
   "extends": "eslint-config-google",
   "parserOptions": {
     # Allow ES6 syntax and node modules.
-    "ecmaVersion": 6,
+    "ecmaVersion": 7,
     "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+    },
   },
+  "plugins": [
+    "react"
+  ],
   "rules": {
+    "comma-dangle": "off",
     "no-unused-vars": "off",
     "linebreak-style": "off",
     # Disable rules or jsdoc.
