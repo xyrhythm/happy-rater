@@ -12,7 +12,8 @@ import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import Toggle from 'material-ui/Toggle';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {muiTheme} from './Main';
+import Appbar from './Appbar';
+import {muiTheme} from './theme';
 
 import queryString from 'query-string';
 
@@ -124,6 +125,7 @@ export default class RaterTable extends Component {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div>
+          <Appbar title="Welcome Foo Bar!" />
           <Table height="300px">
             <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
               <TableRow>

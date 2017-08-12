@@ -5,7 +5,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaterTable from './RaterTable';
 import {Link} from 'react-router-dom';
-import {muiTheme} from './Main';
+import {muiTheme} from './theme';
 
 const styles = {
   container: {
