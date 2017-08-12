@@ -1,3 +1,6 @@
+# happy-rater-web
+Web App for ML Training Data Labeling Tool
+
 ## Installation
 
 First install dependencies:
@@ -15,6 +18,5 @@ NOTE: `npm start` only starts dev server. This does not bring up a backend serve
 
 To see the actual data from MySQL, run
 ```sh
-npm run build
 npm run server
 ```

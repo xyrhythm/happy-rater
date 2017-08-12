@@ -11,19 +11,10 @@ import {
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import Toggle from 'material-ui/Toggle';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {muiTheme} from './Main';
 
 import queryString from 'query-string';
-
-const styles = {
-  propContainer: {
-    width: 200,
-    overflow: 'hidden',
-    margin: '20px auto 0'
-  },
-  propToggleHeader: {
-    margin: '20px auto 10px'
-  }
-};
 
 export default class RaterTable extends Component {
   constructor(props, context) {
@@ -49,7 +40,7 @@ export default class RaterTable extends Component {
       .then((data) => {
         const dataFromServer = JSON.parse(data);
         this.setState({
-          tableData: dataFromServer.length > 0 ? dataFromServer : tableData
+          tableData: dataFromServer
         });
       });
   }
@@ -131,70 +122,72 @@ export default class RaterTable extends Component {
 
   render() {
     return (
-      <div>
-        <Table height="300px">
-          <TableHeader>
-            <TableRow>
-              <TableHeaderColumn tooltip="Unique identifier">
-                ID
-              </TableHeaderColumn>
-              <TableHeaderColumn tooltip="Account information">
-                Account
-              </TableHeaderColumn>
-              <TableHeaderColumn tooltip="User name">
-                Username
-              </TableHeaderColumn>
-              <TableHeaderColumn />
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {this.state.tableData.map((row, index) =>
-              <TableRow key={index}>
+      <MuiThemeProvider muiTheme={muiTheme}>
+        <div>
+          <Table height="300px">
+            <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+              <TableRow>
+                <TableHeaderColumn tooltip="Unique identifier">
+                  ID
+                </TableHeaderColumn>
+                <TableHeaderColumn tooltip="Account information">
+                  Account
+                </TableHeaderColumn>
+                <TableHeaderColumn tooltip="User name">
+                  Username
+                </TableHeaderColumn>
+                <TableHeaderColumn />
+              </TableRow>
+            </TableHeader>
+            <TableBody displayRowCheckbox={false}>
+              {this.state.tableData.map((row, index) =>
+                <TableRow key={index}>
+                  <TableRowColumn>
+                    {row.rater_id}
+                  </TableRowColumn>
+                  <TableRowColumn>
+                    {row.rater_account}
+                  </TableRowColumn>
+                  <TableRowColumn>
+                    {row.rater_username}
+                  </TableRowColumn>
+                  <TableRowColumn>
+                    <FlatButton
+                      label="Delete"
+                      onTouchTap={() => this.handleDeleteRater(row.rater_id)}
+                    />
+                  </TableRowColumn>
+                </TableRow>
+              )}
+            </TableBody>
+            <TableFooter adjustForCheckbox={false}>
+              <TableRow>
                 <TableRowColumn>
-                  {row.rater_id}
-                </TableRowColumn>
-                <TableRowColumn>
-                  {row.rater_account}
-                </TableRowColumn>
-                <TableRowColumn>
-                  {row.rater_username}
-                </TableRowColumn>
-                <TableRowColumn>
-                  <FlatButton
-                    label="Delete"
-                    onTouchTap={() => this.handleDeleteRater(row.rater_id)}
+                  <TextField
+                    value={this.state.newRaterId}
+                    onChange={this.updateNewRaterId}
                   />
                 </TableRowColumn>
+                <TableRowColumn>
+                  <TextField
+                    value={this.state.newRaterAccount}
+                    onChange={this.updateNewRaterAccount}
+                  />
+                </TableRowColumn>
+                <TableRowColumn>
+                  <TextField
+                    value={this.state.newRaterUserName}
+                    onChange={this.updateNewRaterUserName}
+                  />
+                </TableRowColumn>
+                <TableRowColumn>
+                  <FlatButton label="Add" onTouchTap={this.handleAddRater} />
+                </TableRowColumn>
               </TableRow>
-            )}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableRowColumn>
-                <TextField
-                  value={this.state.newRaterId}
-                  onChange={this.updateNewRaterId}
-                />
-              </TableRowColumn>
-              <TableRowColumn>
-                <TextField
-                  value={this.state.newRaterAccount}
-                  onChange={this.updateNewRaterAccount}
-                />
-              </TableRowColumn>
-              <TableRowColumn>
-                <TextField
-                  value={this.state.newRaterUserName}
-                  onChange={this.updateNewRaterUserName}
-                />
-              </TableRowColumn>
-              <TableRowColumn>
-                <FlatButton label="Add" onTouchTap={this.handleAddRater} />
-              </TableRowColumn>
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </div>
+            </TableFooter>
+          </Table>
+        </div>
+      </MuiThemeProvider>
     );
   }
 }
