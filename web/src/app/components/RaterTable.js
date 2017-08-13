@@ -22,13 +22,11 @@ export default class RaterTable extends Component {
     super(props, context);
     this.state = {
       tableData: [],
-      newRaterId: '',
       newRaterAccount: '',
       newRaterUserName: ''
     };
     this.handleDeleteRater = this.handleDeleteRater.bind(this);
     this.handleAddRater = this.handleAddRater.bind(this);
-    this.updateNewRaterId = this.updateNewRaterId.bind(this);
     this.updateNewRaterAccount = this.updateNewRaterAccount.bind(this);
     this.updateNewRaterUserName = this.updateNewRaterUserName.bind(this);
   }
@@ -40,6 +38,7 @@ export default class RaterTable extends Component {
       })
       .then((data) => {
         const dataFromServer = JSON.parse(data);
+        console.log(dataFromServer);
         this.setState({
           tableData: dataFromServer
         });
@@ -72,8 +71,6 @@ export default class RaterTable extends Component {
 
   handleAddRater() {
     const formData = {
-      // TODO: We should not assign ID manually.
-      rater_id: this.state.newRaterId,
       rater_account: this.state.newRaterAccount,
       rater_username: this.state.newRaterUserName,
       // TODO: This is hacky -- find a better way to convert from JS date
@@ -92,20 +89,16 @@ export default class RaterTable extends Component {
     }).then((response) => {
       if (response.ok) {
         const newData = this.state.tableData;
+        // TODO(fenghaolw): Do a read instead since the new rater_id is unknown.
+        // Might be ok to add a button for manual read refresh - since this is
+        // only used for debugging.
         newData.push(formData);
         this.setState({
-          newRaterId: '',
           newRaterAccount: '',
           newRaterUserName: '',
           tableData: newData
         });
       }
-    });
-  }
-
-  updateNewRaterId(event, newValue) {
-    this.setState({
-      newRaterId: newValue
     });
   }
 
@@ -154,6 +147,9 @@ export default class RaterTable extends Component {
                     {row.rater_username}
                   </TableRowColumn>
                   <TableRowColumn>
+                    {row.rater_registration_timetamp}
+                  </TableRowColumn>
+                  <TableRowColumn>
                     <FlatButton
                       label="Delete"
                       onTouchTap={() => this.handleDeleteRater(row.rater_id)}
@@ -164,12 +160,6 @@ export default class RaterTable extends Component {
             </TableBody>
             <TableFooter adjustForCheckbox={false}>
               <TableRow>
-                <TableRowColumn>
-                  <TextField
-                    value={this.state.newRaterId}
-                    onChange={this.updateNewRaterId}
-                  />
-                </TableRowColumn>
                 <TableRowColumn>
                   <TextField
                     value={this.state.newRaterAccount}

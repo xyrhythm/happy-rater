@@ -39,9 +39,7 @@ app.post('/addRater', function(req, res) {
 app.post('/deleteRater', function(req, res) {
   db.deleteEntry(
     'rater',
-    {
-      rater_id: req.body.rater_id
-    },
+    buildMap(req.body),
     (err, result) => {
       if (err) {
         res.writeHead(500);
@@ -55,7 +53,7 @@ app.post('/deleteRater', function(req, res) {
 // Always quote the values to avoid SQL syntax errors.
 function buildMap(obj) {
   return Object.keys(obj).reduce(
-    (map, key) => map.set(key, `'${obj[key]}'`),
+    (map, key) => map.set(key, obj[key]),
     new Map()
   );
 }
