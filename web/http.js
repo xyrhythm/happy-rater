@@ -1,11 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const db = require('./db');
 
 // TODO(fenghaolw): Figure out ACLs for urls.
 app = express();
-app.use(express.static('build'));
+app.use(express.static(path.resolve(__dirname, 'build')));
 
 app.use(
   bodyParser.urlencoded({
@@ -14,40 +15,61 @@ app.use(
 );
 app.use(bodyParser.json());
 
-app.get('/getRater', function(req, res) {
-  db.viewTable('rater', function(err, result) {
-    if (err) {
-      res.writeHead(500);
-      res.end();
-    } else {
-      res.write(JSON.stringify(result));
-      res.end();
-    }
-  });
+app.get('/getRater', getDataFromTable('rater'));
+app.post('/addRater', insertDataIntoTable('rater'));
+app.post('/deleteRater', deleteDataFromTable('rater'));
+
+app.get('/getTasks', getDataFromTable('task'));
+app.post('/addTask', insertDataIntoTable('task'));
+app.post('/deleteTask', deleteDataFromTable('task'));
+
+// Always redirect to home page for any other requests.
+// This simplifies the development since we won't need to type the URL.
+// Note that this uses wildcard matching since this must be after all other
+// request handlers.
+app.get('*', function(req, res) {
+  res.redirect('/');
 });
 
-app.post('/addRater', function(req, res) {
-  db.insertEntry('rater', buildMap(req.body), (err, result) => {
-    if (err) {
-      // TODO(fenghaolw): provide better error message.
-      res.writeHead(500);
-    }
-    res.end();
-  });
-});
-
-app.post('/deleteRater', function(req, res) {
-  db.deleteEntry(
-    'rater',
-    buildMap(req.body),
-    (err, result) => {
+// Helper function for reading data from a particular table.
+// This returns a function that can be used as a callback for request handlers.
+function getDataFromTable(tableName) {
+  return (req, res) => {
+    db.viewTable(tableName, function(err, result) {
       if (err) {
+        res.writeHead(500);
+        res.end();
+      } else {
+        res.write(JSON.stringify(result));
+        res.end();
+      }
+    });
+  };
+}
+
+function insertDataIntoTable(tableName) {
+  return (req, res) => {
+    db.insertEntry(tableName, buildMap(req.body), (err, result) => {
+      if (err) {
+        // TODO(fenghaolw): provide better error message.
         res.writeHead(500);
       }
       res.end();
-    }
-  );
-});
+    });
+  };
+}
+
+function deleteDataFromTable(tableName) {
+  return (req, res) => {
+    db.deleteEntry(tableName, buildMap(req.body), (err, result) => {
+      if (err) {
+        // TODO(fenghaolw): provide better error message.
+        res.writeHead(500);
+      }
+      res.end();
+    });
+  };
+}
 
 // Convert a regular JS object to a ES6 map.
 // Always quote the values to avoid SQL syntax errors.

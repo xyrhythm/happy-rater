@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import AppBar from 'material-ui/AppBar';
+import Divider from 'material-ui/Divider';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 
@@ -29,6 +30,7 @@ export default class Appbar extends Component {
           <MenuItem>Home</MenuItem>
           <MenuItem>All Tasks</MenuItem>
           <MenuItem>Stats</MenuItem>
+          <Divider />
           <MenuItem>Contact Us</MenuItem>
         </Drawer>
       </div>

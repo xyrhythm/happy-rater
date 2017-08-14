@@ -1,6 +1,7 @@
 {
   # Use google's config as a baseline.
   "extends": "eslint-config-google",
+  "parser": "babel-eslint",
   "parserOptions": {
     # Allow ES6 syntax and node modules.
     "ecmaVersion": 7,
@@ -10,11 +11,14 @@
     },
   },
   "plugins": [
+    "babel",
     "react"
   ],
   "rules": {
     "comma-dangle": "off",
     "no-unused-vars": "off",
+    # This does not work well with ES6 arrow functions in a class.
+    "no-invalid-this": "off",
     "linebreak-style": "off",
     # Disable rules or jsdoc.
     "require-jsdoc": "off",

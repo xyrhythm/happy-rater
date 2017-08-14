@@ -17,7 +17,6 @@ con.connect(function(err) {
 });
 
 function querySql(sql, callback) {
-  console.log(sql);
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -27,62 +26,74 @@ function querySql(sql, callback) {
 }
 
 function viewTable(tableName, callback) {
-  var query = mysql.format('SELECT * FROM ?? LIMIT 100', [tableName]);
+  const query = mysql.format('SELECT * FROM ?? LIMIT 100', [tableName]);
   querySql(query, callback);
 }
 
 // entry and condition are ES6 Maps.
 // TODO(xyrhythm): Need to support batch insert/delete/update.
 function insertEntry(tableName, entry, callback) {
-  var insertTerms = [];
-  var queryInserts = [tableName];
+  const insertTerms = [];
+  const queryInserts = [tableName];
   const entryFields = Array.from(entry.keys());
   const entryValues = Array.from(entry.values());
-  for (i=0; i<entryFields.length; ++i) {
+  for (i = 0; i < entryFields.length; ++i) {
     insertTerms.push('?? = ?');
     queryInserts.push(entryFields[i]);
     queryInserts.push(entryValues[i]);
   }
 
-  var query = mysql.format('INSERT INTO ?? SET ' + insertTerms.join(', '), queryInserts);
+  const query = mysql.format(
+    'INSERT INTO ?? SET ' + insertTerms.join(', '),
+    queryInserts
+  );
   querySql(query, callback);
 }
 
 function deleteEntry(tableName, condition, callback) {
-  var conditionTerms = [];
-  var queryInserts = [tableName];
+  const conditionTerms = [];
+  const queryInserts = [tableName];
   const fields = Array.from(condition.keys());
   const values = Array.from(condition.values());
-  for (i=0; i<fields.length; ++i) {
+  for (i = 0; i < fields.length; ++i) {
     conditionTerms.push('?? = ?');
     queryInserts.push(fields[i]);
     queryInserts.push(values[i]);
   }
-  var query = mysql.format('DELETE FROM ?? WHERE ' + conditionTerms.join(' AND '), queryInserts);
+  const query = mysql.format(
+    'DELETE FROM ?? WHERE ' + conditionTerms.join(' AND '),
+    queryInserts
+  );
   querySql(query, callback);
 }
 
 function updateEntry(tableName, entry, condition, callback) {
-  var updateTerms = [];
-  var queryInserts = [tableName];
+  const updateTerms = [];
+  const queryInserts = [tableName];
   const entryFields = Array.from(entry.keys());
   const entryValues = Array.from(entry.values());
-  for (i=0; i<entryFields.length; ++i) {
+  for (i = 0; i < entryFields.length; ++i) {
     updateTerms.push('?? = ?');
     queryInserts.push(entryFields[i]);
     queryInserts.push(entryValues[i]);
   }
 
-  var conditionTerms = [];
+  const conditionTerms = [];
   const conditionFields = Array.from(condition.keys());
   const conditionValues = Array.from(condition.values());
-  for (i=0; i<conditionFields.length; ++i) {
+  for (i = 0; i < conditionFields.length; ++i) {
     conditionTerms.push('?? = ?');
     queryInserts.push(conditionFields[i]);
     queryInserts.push(conditionValues[i]);
   }
 
-  var query = mysql.format('UPDATE ?? SET ' + updateTerms.join(', ') + ' WHERE ' + conditionTerms.join(' AND '), queryInserts);
+  const query = mysql.format(
+    'UPDATE ?? SET ' +
+      updateTerms.join(', ') +
+      ' WHERE ' +
+      conditionTerms.join(' AND '),
+    queryInserts
+  );
   querySql(query, callback);
 }
 

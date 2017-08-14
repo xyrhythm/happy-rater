@@ -3,9 +3,9 @@ import {Card, CardActions, CardText} from 'material-ui/Card';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import RaterTable from './RaterTable';
 import {Link} from 'react-router-dom';
-import {muiTheme} from './theme';
+import RaterTable from '../components/RaterTable';
+import {muiTheme} from '../components/theme';
 
 const styles = {
   container: {
@@ -17,7 +17,7 @@ const styles = {
   }
 };
 
-export default class Login extends Component {
+export default class LoginView extends Component {
   constructor(props, context) {
     super(props, context);
     this.handleLoginRequest = this.handleLoginRequest.bind(this);
@@ -55,14 +55,14 @@ export default class Login extends Component {
                 primary={true}
                 style={{marginRight: 40}}
                 onTouchTap={this.handleLoginRequest}
-                containerElement={<Link to="/rater" />}
+                containerElement={<Link to="/owner" />}
               />
               <RaisedButton
                 label="SIGN UP"
                 secondary={true}
                 style={{marginLeft: 40}}
                 onTouchTap={this.handleSignUpRequest}
-                containerElement={<Link to="/rater" />}
+                containerElement={<Link to="/owner" />}
               />
             </CardActions>
           </Card>

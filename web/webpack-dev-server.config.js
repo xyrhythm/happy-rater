@@ -17,7 +17,8 @@ const config = {
     hot: true, // Live-reload
     inline: true,
     port: 8080, // Port Number
-    host: 'localhost' // Change to '0.0.0.0' for external facing server
+    host: 'localhost', // Change to '0.0.0.0' for external facing server
+    historyApiFallback: true // This allows devserver to work with react router
   },
   devtool: 'eval',
   output: {
