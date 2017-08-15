@@ -97,7 +97,13 @@ function updateEntry(tableName, entry, condition, callback) {
   querySql(query, callback);
 }
 
+function checkLogin(tableName, entry, callback) {
+  const query = mysql.format('SELECT `password` FROM ?? WHERE `account` = ?', [tableName, entry.account]);
+  querySql(query, callback);
+}
+
 exports.insertEntry = insertEntry;
 exports.deleteEntry = deleteEntry;
 exports.updateEntry = updateEntry;
+exports.checkLogin = checkLogin;
 exports.viewTable = viewTable;

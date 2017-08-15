@@ -1,30 +1,43 @@
 CREATE TABLE IF NOT EXISTS rater (
 	rater_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   # email.
-  rater_account VARCHAR(128) NOT NULL UNIQUE,
-  rater_username VARCHAR(32) NOT NULL,
-  rater_registration_timetamp TIMESTAMP NOT NULL
+  account VARCHAR(128) NOT NULL UNIQUE,
+  password VARCHAR(128) NOT NULL,
+  username VARCHAR(32) NOT NULL,
+  created_timestamp TIMESTAMP NOT NULL,
+  modified_timestamp TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS requester (
 	requester_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   # email
-  requester_account VARCHAR(128) NOT NULL,
-  requester_username VARCHAR(32) NOT NULL,
-  requester_registration_timetamp TIMESTAMP NOT NULL
+  account VARCHAR(128) NOT NULL UNIQUE,
+  password VARCHAR(128) NOT NULL,
+  username VARCHAR(32) NOT NULL,
+  created_timestamp TIMESTAMP NOT NULL,
+  modified_timestamp TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS admin (
+  # email
+  account VARCHAR(128) NOT NULL PRIMARY KEY,
+  password VARCHAR(128) NOT NULL,
+  username VARCHAR(32) NOT NULL,
+  created_timestamp TIMESTAMP NOT NULL,
+  modified_timestamp TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS task (
 	task_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   # foreign key?
-  task_requester_id INT NOT NULL,
-	task_name VARCHAR(128) NOT NULL,
-  task_type ENUM('object-detection', 'classification', 'segmentation') NOT NULL,
-  task_instruction VARCHAR(256) NOT NULL,
-  task_question_string VARCHAR(128) NOT NULL,
-  # comma-separated answer strings.
-  task_answer_options VARCHAR(256),
-  task_creation_timestamp TIMESTAMP NOT NULL
+  requester_id INT NOT NULL,
+	name VARCHAR(128) NOT NULL,
+  type ENUM('detection', 'classification', 'segmentation') NOT NULL,
+  instruction VARCHAR(256) NOT NULL,
+  question_string VARCHAR(128) NOT NULL,
+  answer_options_json TEXT,
+  created_timestamp TIMESTAMP NOT NULL,
+  modified_timestamp TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ratertask (

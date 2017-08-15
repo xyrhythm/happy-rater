@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const db = require('./db');
 
@@ -24,6 +26,14 @@ app.get('/getTasks', getDataFromTable('task'));
 app.post('/addTask', insertDataIntoTable('task'));
 app.post('/deleteTask', deleteDataFromTable('task'));
 app.post('/updateTask', updateDataFromTable('task'));
+
+// TODO(fenghaolw): Move login pieces to the correct place.
+app.get('/login', checkLoginForTable('rater'));
+app.get('/loginRequester', checkLoginForTable('requester'));
+app.get('/loginAdmin', checkLoginForTable('admin'));
+
+app.post('/signup', createLoginForTable('rater'));
+app.post('/signupRequester', createLoginForTable('requester'));
 
 // Always redirect to home page for any other requests.
 // This simplifies the development since we won't need to type the URL.
@@ -87,6 +97,60 @@ function updateDataFromTable(tableName) {
         res.end();
       }
     );
+}
+
+function checkLoginForTable(tableName) {
+  return (req, res) => {
+    db.checkLogin(tableName, buildMap(req.body), (err, result) => {
+      if (err) {
+        // TODO(fenghaolw): provide better error message.
+        res.writeHead(500);
+      } else {
+        if (result.length < 1) {
+          res.write({code: -1, msg: 'account not found.'});
+        } else {
+          const savedPass = result[0].password;
+          bcrypt.compare(req.body.password, savedPass).then( (result) => {
+            if (result) {
+              res.write({code: 0, msg: 'logged in.'});
+            } else {
+              res.write({code: -2, msg: 'wrong password.'});
+            }
+          });
+        }
+      }
+    });
+    res.end();
+  };
+}
+
+// Check whether a provided password meets the requirments.
+function isGoodPassword(password) {
+  return password.length >= 8;
+}
+
+function createLoginForTable(tableName) {
+  return (req, res) => {
+    const providedPass = req.body.password;
+    if (isGoodPassword(providedPass)) {
+      var reqBody = req.body;
+      bcrypt.hash(providedPass, saltRounds, (err, hash) => {
+        if (err) {
+          res.writeHead(500);
+        } else {
+          reqBody.password = hash;
+          db.insertEntry(tableName, buildMap(reqBody), (err, result) => {
+            if (err) {
+              // TODO(fenghaolw): provide better error message.
+              res.writeHead(500);
+            }
+          });
+        }
+      });
+    } else {
+      res.write({code: -1, msg: 'Need a better password.'});
+    }
+    res.end();
   };
 }
 
