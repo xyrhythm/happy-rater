@@ -14,6 +14,16 @@ import FlatButton from 'material-ui/FlatButton';
 
 import queryString from 'query-string';
 
+// TODO: currently there is no easy way to convert from MySQL datetime format
+// to timestamp used in Javascript.
+// One possible approach is to use time since epoch in mysql?
+// Currently we are always using UTC date.
+const currentTime = () => {
+  const d = new Date();
+  d.setUTCHours(0);
+  return d.toISOString().slice(0, 19).replace('T', ' ');
+};
+
 /**
  * This is an abstract data table that can be used for different places.
  *
@@ -106,20 +116,29 @@ export default class DataTable extends Component {
     }
   };
 
-  openDialog = (title, useDefaultData) => {
+  openDialog = (title, isEditDialog) => {
+    // For "Add" dialog, selectedField is an empty object, and we should use
+    // defaultData for the initial value of the form.
     const selectedField = {};
-    selectedField[this.props.primaryField] = this.state.tableData[
-      this.state.selected[0]
-    ][this.props.primaryField];
+    let dataForDialog = this.props.defaultData;
+    // For "Edit" dialog, set the selectedField. This will contain the primary
+    // field (for example, task_id) for the current selected row.
+    // Also make a deep copy for the currentSelectedData.
+    // Currently we Serialize and deserialize the object to make a deep copy.
+    // Is there a better way to achieve this?
+    if (isEditDialog) {
+      selectedField[this.props.primaryField] = this.state.tableData[
+        this.state.selected[0]
+      ][this.props.primaryField];
+      dataForDialog = JSON.parse(
+        JSON.stringify(this.state.currentSelectedData)
+      );
+    }
     this.setState({
       dialogOpened: true,
       dialogTitle: title,
       selectedField: selectedField,
-      // Serialize and deserialize the object to make a deep copy.
-      // Is there a better way to achieve this?
-      dataForDialog: useDefaultData
-        ? this.props.defaultData
-        : JSON.parse(JSON.stringify(this.state.currentSelectedData))
+      dataForDialog: dataForDialog
     });
   };
 
@@ -135,19 +154,22 @@ export default class DataTable extends Component {
   closeDialogSubmit = () => {
     let postUrl;
     let postData;
+    // Create a new object that only contains the fields defined in the
+    // defaultData. dataForDialog will contains all the fields, but we should
+    // not modify some of these fields.
+    const entries = {};
+    for (let key of Object.keys(this.props.defaultData)) {
+      entries[key] = this.state.dataForDialog[key];
+    }
     // TODO: Use the string comparison might be error-prone
     if (this.state.dialogTitle.toLowerCase() == 'add') {
       postUrl = this.props.urls.add;
-      postData = JSON.stringify(this.state.dataForDialog);
+      // entries.created_timetamp = currentTime();
+      // Add timestamp
+      postData = JSON.stringify(entries);
     } else {
       postUrl = this.props.urls.update;
-      // Create a new object that only contains the fields defined in the
-      // defaultData. dataForDialog will contains all the fields, but we should
-      // not modify some of these fields.
-      const entries = {};
-      for (let key of Object.keys(this.props.defaultData)) {
-        entries[key] = this.state.dataForDialog[key];
-      }
+      entries.modified_timestamp = currentTime();
       postData = JSON.stringify({
         entries: entries,
         conditions: this.state.selectedField
@@ -246,14 +268,14 @@ export default class DataTable extends Component {
               <TableRowColumn>
                 <FlatButton
                   label="Edit"
-                  onTouchTap={() => this.openDialog('Edit', false)}
+                  onTouchTap={() => this.openDialog('Edit', true)}
                   disabled={this.state.selected.length == 0}
                 />
               </TableRowColumn>
               <TableRowColumn>
                 <FlatButton
                   label="Add"
-                  onTouchTap={() => this.openDialog('Add', true)}
+                  onTouchTap={() => this.openDialog('Add', false)}
                 />
               </TableRowColumn>
             </TableRow>

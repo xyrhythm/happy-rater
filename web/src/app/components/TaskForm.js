@@ -25,31 +25,31 @@ const selectStyle = {
 
 export default class TaskForm extends Component {
   state = {
-    taskRequesterId: this.props.formData.task_requester_id,
-    taskName: this.props.formData.task_name,
-    taskType: this.props.formData.task_type,
-    taskInstruction: this.props.formData.task_instruction,
-    taskQuestion: this.props.formData.task_question_string
+    taskRequesterId: this.props.formData.requester_id,
+    taskName: this.props.formData.name,
+    taskType: this.props.formData.type,
+    taskInstruction: this.props.formData.instruction,
+    taskQuestion: this.props.formData.question_string
   };
 
   onTaskNameChange = (e) => {
     this.setState({taskName: e.target.value});
-    this.props.callback('task_name', e.target.value);
+    this.props.callback('name', e.target.value);
   };
 
   onTaskTypeChange = (e, idx, v) => {
     this.setState({taskType: v});
-    this.props.callback('task_type', v);
+    this.props.callback('type', v);
   };
 
   onTaskInstructionChange = (e) => {
     this.setState({taskInstruction: e.target.value});
-    this.props.callback('task_instruction', e.target.value);
+    this.props.callback('instruction', e.target.value);
   };
 
   onTaskQuestionChange = (e) => {
     this.setState({taskQuestion: e.target.value});
-    this.props.callback('task_question_string', e.target.value);
+    this.props.callback('question_string', e.target.value);
   };
 
   render() {
@@ -99,6 +99,10 @@ export default class TaskForm extends Component {
           value={this.state.taskQuestion}
           onChange={this.onTaskQuestionChange}
         />
+        <br />
+        Created: {this.props.formData.created_timestamp}
+        <br />
+        Modified: {this.props.formData.modified_timestamp}
       </div>
     );
   }

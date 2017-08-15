@@ -8,45 +8,40 @@ export default class TaskCard extends Component {
     const defaultData = {
       // TODO: For now, hard-coded task requester id to be 1.
       // Hook this up with the login logic in the future.
-      task_requester_id: 1,
-      task_name: '',
-      task_type: 0,
-      task_instruction: '',
-      task_question_string: ''
+      requester_id: 1,
+      name: '',
+      type: 0,
+      instruction: '',
+      question_string: ''
     };
     const taskTable = (
       <DataTable
         defaultData={defaultData}
         tableFields={[
           {
-            name: 'ID',
-            tooltip: 'Unique identifier',
-            identifier: 'task_id'
-          },
-          {
             name: 'Requester',
             tooltip: 'Requester identifier',
-            identifier: 'task_requester_id'
+            identifier: 'requester_id'
           },
           {
             name: 'Name',
             tooltip: 'Task name',
-            identifier: 'task_name'
+            identifier: 'name'
           },
           {
             name: 'Type',
             tooltip: 'Task type',
-            identifier: 'task_type'
+            identifier: 'type'
           },
           {
             name: 'Instruction',
             tooltip: 'Task instruction',
-            identifier: 'task_instruction'
+            identifier: 'instruction'
           },
           {
             name: 'Question',
             tooltip: 'Task question',
-            identifier: 'task_question_string'
+            identifier: 'question_string'
           }
         ]}
         primaryField="task_id"

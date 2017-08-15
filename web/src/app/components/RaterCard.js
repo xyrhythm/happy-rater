@@ -5,30 +5,30 @@ import RaterForm from './RaterForm';
 
 export default class RaterCard extends Component {
   render() {
-    const defaultData = {rater_account: '', rater_username: ''};
+    const defaultData = {account: '', username: ''};
     const raterTable = (
       <DataTable
         defaultData={defaultData}
         tableFields={[
           {
-            name: 'ID',
-            tooltip: 'Unique identifier',
-            identifier: 'rater_id'
-          },
-          {
             name: 'Account',
             tooltip: 'Account information',
-            identifier: 'rater_account'
+            identifier: 'account'
           },
           {
             name: 'User Name',
             tooltip: 'User name',
-            identifier: 'rater_username'
+            identifier: 'username'
           },
           {
             name: 'Registration time',
             tooltip: 'The timestamp when the rater was created',
-            identifier: 'rater_registration_timetamp'
+            identifier: 'created_timetamp'
+          },
+          {
+            name: 'Modified time',
+            tooltip: 'The timestamp when the rater was modified',
+            identifier: 'modified_timestamp'
           }
         ]}
         primaryField="rater_id"

@@ -97,6 +97,7 @@ function updateDataFromTable(tableName) {
         res.end();
       }
     );
+  };
 }
 
 function checkLoginForTable(tableName) {
@@ -110,7 +111,7 @@ function checkLoginForTable(tableName) {
           res.write({code: -1, msg: 'account not found.'});
         } else {
           const savedPass = result[0].password;
-          bcrypt.compare(req.body.password, savedPass).then( (result) => {
+          bcrypt.compare(req.body.password, savedPass).then((result) => {
             if (result) {
               res.write({code: 0, msg: 'logged in.'});
             } else {
@@ -133,7 +134,7 @@ function createLoginForTable(tableName) {
   return (req, res) => {
     const providedPass = req.body.password;
     if (isGoodPassword(providedPass)) {
-      var reqBody = req.body;
+      let reqBody = req.body;
       bcrypt.hash(providedPass, saltRounds, (err, hash) => {
         if (err) {
           res.writeHead(500);

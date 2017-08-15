@@ -8,21 +8,21 @@ const formStyle = {
 
 export default class RaterForm extends Component {
   state = {
-    raterAccount: this.props.formData ? this.props.formData.rater_account : '',
-    raterUsername: this.props.formData ? this.props.formData.rater_username : ''
+    raterAccount: this.props.formData ? this.props.formData.account : '',
+    raterUsername: this.props.formData ? this.props.formData.username : ''
   };
 
   onRaterAccountChange = (e) => {
     this.setState({raterAccount: e.target.value});
     if (this.props.callback) {
-      this.props.callback('rater_account', e.target.value);
+      this.props.callback('account', e.target.value);
     }
   };
 
   onRaterUserNameChange = (e) => {
     this.setState({raterUsername: e.target.value});
     if (this.props.callback) {
-      this.props.callback('rater_username', e.target.value);
+      this.props.callback('username', e.target.value);
     }
   };
 
@@ -44,6 +44,9 @@ export default class RaterForm extends Component {
           value={this.state.raterUsername}
           onChange={this.onRaterUserNameChange}
         />
+        Created: {this.props.formData.created_timestamp}
+        <br />
+        Modified: {this.props.formData.modified_timestamp}
       </div>
     );
   }
