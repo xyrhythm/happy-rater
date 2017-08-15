@@ -1,13 +1,48 @@
 import React, {Component} from 'react';
 import {Card, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import RaterTable from './RaterTable';
+import DataTable from './DataTable';
+import RaterForm from './RaterForm';
 
 export default class RaterCard extends Component {
-  constructor(props, context) {
-    super(props, context);
-  }
-
   render() {
+    const defaultData = {rater_account: '', rater_username: ''};
+    const raterTable = (
+      <DataTable
+        defaultData={defaultData}
+        tableFields={[
+          {
+            name: 'ID',
+            tooltip: 'Unique identifier',
+            identifier: 'rater_id'
+          },
+          {
+            name: 'Account',
+            tooltip: 'Account information',
+            identifier: 'rater_account'
+          },
+          {
+            name: 'User Name',
+            tooltip: 'User name',
+            identifier: 'rater_username'
+          },
+          {
+            name: 'Registration time',
+            tooltip: 'The timestamp when the rater was created',
+            identifier: 'rater_registration_timetamp'
+          }
+        ]}
+        primaryField="rater_id"
+        urls={{
+          fetch: '/getRaters',
+          delete: '/deleteRater',
+          add: '/addRater',
+          update: '/updateRater'
+        }}
+      >
+        <RaterForm />
+      </DataTable>
+    );
+
     return (
       <Card style={this.props.style}>
         <CardTitle
@@ -15,7 +50,7 @@ export default class RaterCard extends Component {
           subtitle="Create/Delete raters in the following table."
         />
         <CardText>
-          <RaterTable />
+          {raterTable}
         </CardText>
       </Card>
     );

@@ -17,10 +17,6 @@ const cardStyle = {
 };
 
 export default class OwnerView extends Component {
-  constructor(props, context) {
-    super(props, context);
-  }
-
   render() {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>

@@ -25,11 +25,11 @@ const selectStyle = {
 
 export default class TaskForm extends Component {
   state = {
-    taskRequesterId: this.props.taskData.task_requester_id,
-    taskName: this.props.taskData.task_name,
-    taskType: this.props.taskData.task_type,
-    taskInstruction: this.props.taskData.task_instruction,
-    taskQuestion: this.props.taskData.task_question_string
+    taskRequesterId: this.props.formData.task_requester_id,
+    taskName: this.props.formData.task_name,
+    taskType: this.props.formData.task_type,
+    taskInstruction: this.props.formData.task_instruction,
+    taskQuestion: this.props.formData.task_question_string
   };
 
   onTaskNameChange = (e) => {

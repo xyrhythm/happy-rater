@@ -15,13 +15,15 @@ app.use(
 );
 app.use(bodyParser.json());
 
-app.get('/getRater', getDataFromTable('rater'));
+app.get('/getRaters', getDataFromTable('rater'));
 app.post('/addRater', insertDataIntoTable('rater'));
 app.post('/deleteRater', deleteDataFromTable('rater'));
+app.post('/updateRater', updateDataFromTable('rater'));
 
 app.get('/getTasks', getDataFromTable('task'));
 app.post('/addTask', insertDataIntoTable('task'));
 app.post('/deleteTask', deleteDataFromTable('task'));
+app.post('/updateTask', updateDataFromTable('task'));
 
 // Always redirect to home page for any other requests.
 // This simplifies the development since we won't need to type the URL.
@@ -68,6 +70,23 @@ function deleteDataFromTable(tableName) {
       }
       res.end();
     });
+  };
+}
+
+function updateDataFromTable(tableName) {
+  return (req, res) => {
+    db.updateEntry(
+      tableName,
+      buildMap(req.body.entries),
+      buildMap(req.body.conditions),
+      (err, result) => {
+        if (err) {
+          // TODO(fenghaolw): provide better error message.
+          res.writeHead(500);
+        }
+        res.end();
+      }
+    );
   };
 }
 

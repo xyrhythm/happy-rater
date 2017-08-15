@@ -5,15 +5,13 @@ import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 
 export default class Appbar extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.toggleDrawer = this.toggleDrawer.bind(this);
-    this.state = {drawerOpen: false};
-  }
+  state = {
+    drawerOpen: false
+  };
 
-  toggleDrawer() {
+  toggleDrawer = () => {
     this.setState({drawerOpen: !this.state.drawerOpen});
-  }
+  };
 
   render() {
     return (

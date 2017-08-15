@@ -4,7 +4,6 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {Link} from 'react-router-dom';
-import RaterTable from '../components/RaterTable';
 import {muiTheme} from '../components/theme';
 
 const styles = {
@@ -18,17 +17,11 @@ const styles = {
 };
 
 export default class LoginView extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.handleLoginRequest = this.handleLoginRequest.bind(this);
-    this.handleSignUpRequest = this.handleSignUpRequest.bind(this);
-  }
-
   // TODO(xyrhythm): Implement login logic.
-  handleLoginRequest() {}
+  handleLoginRequest = () => {};
 
   // TODO(xyrhythm): Implement signup logic.
-  handleSignUpRequest() {}
+  handleSignUpRequest = () => {};
 
   render() {
     return (
