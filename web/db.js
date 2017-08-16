@@ -25,13 +25,34 @@ function querySql(sql, callback) {
   });
 }
 
+/*
+Generic mysql queries.
+*/
 function viewTable(tableName, callback) {
   const query = mysql.format('SELECT * FROM ?? LIMIT 100', [tableName]);
   querySql(query, callback);
 }
 
-// entry and condition are ES6 Maps.
-// TODO(xyrhythm): Need to support batch insert/delete/update.
+// This function is meant for reading a single (or a few) rows.
+// For reads with many rows, be sure to use pagination.
+function getEntry(tableName, condition, callback) {
+  const conditionTerms = [];
+  const queryInserts = [tableName];
+  const fields = Array.from(condition.keys());
+  const values = Array.from(condition.values());
+  for (i = 0; i < fields.length; ++i) {
+    conditionTerms.push('?? = ?');
+    queryInserts.push(fields[i]);
+    queryInserts.push(values[i]);
+  }
+  const query = mysql.format(
+    'SELECT * FROM ?? WHERE ' + conditionTerms.join(' AND '),
+    queryInserts
+  );
+  querySql(query, callback);
+}
+
+// TODO(xyrhythm): Need to support batch insert/update.
 function insertEntry(tableName, entry, callback) {
   const insertTerms = [];
   const queryInserts = [tableName];
@@ -98,12 +119,61 @@ function updateEntry(tableName, entry, condition, callback) {
 }
 
 function checkLogin(tableName, entry, callback) {
-  const query = mysql.format('SELECT `password` FROM ?? WHERE `account` = ?', [tableName, entry.account]);
+  const query = mysql.format('SELECT `password` FROM ?? WHERE `account` = ?',
+    [tableName, entry.account]);
   querySql(query, callback);
 }
 
+/*
+APIs for rater's view.
+*/
+// options = {rater_id: }
+function getTasksForRater(options, callback) {
+  const query = mysql.format(
+    'SELECT `task_id`, `num_answer` FROM ratertask WHERE `rater_id` = ?',
+    [options.rater_id]);
+  querySql(query, callback);
+}
+
+// options = {task_id: , offset: , page_size: }
+function getQuestionsForTask(options, callback) {
+  const query = mysql.format('SELECT `question_id`, `image_url` FROM question' +
+  'WHERE `task_id` = ? LIMIT ? ?',
+  [options.task_id, options.offset, options.page_size]);
+  querySql(query, callback);
+}
+
+// options = {rater_id: , task_id: }
+// Note this function only returns question_id that the rater has answered
+// for the task - answer_json is deliberately skipped.
+function getAnswersForRaterForTask(options, callback) {
+  const query = mysql.format(
+    'SELECT `question_id` FROM answer WHERE `rater_id` = ? AND `task_id` = ?',
+    [options.rater_id, options.task_id]);
+  querySql(query, callback);
+}
+
+/*
+APIs for requester/owner's view.
+*/
+// options = {requester_id: }
+function getTasksForRequester(options, callback) {
+  const query = mysql.format(
+    'SELECT `task_id`, `num_question`, `num_answer_collected` ' +
+    'FROM requestertask WHERE `requester_id` = ?', [options.requester_id]);
+  querySql(query, callback);
+}
+
+exports.viewTable = viewTable;
+exports.getEntry = getEntry;
 exports.insertEntry = insertEntry;
 exports.deleteEntry = deleteEntry;
 exports.updateEntry = updateEntry;
+
 exports.checkLogin = checkLogin;
-exports.viewTable = viewTable;
+
+exports.getTasksForRater = getTasksForRater;
+exports.getQuestionsForTask = getQuestionsForTask;
+exports.getAnswersForRaterForTask = getAnswersForRaterForTask;
+
+exports.getTasksForRequester = getTasksForRequester;
