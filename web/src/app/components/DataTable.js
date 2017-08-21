@@ -14,14 +14,10 @@ import FlatButton from 'material-ui/FlatButton';
 
 import queryString from 'query-string';
 
-// TODO: currently there is no easy way to convert from MySQL datetime format
-// to timestamp used in Javascript.
-// One possible approach is to use time since epoch in mysql?
-// Currently we are always using UTC date.
 const currentTime = () => {
   const d = new Date();
   d.setUTCHours(0);
-  return d.toISOString().slice(0, 19).replace('T', ' ');
+  return Math.floor(d.getTime() / 1000);
 };
 
 /**
@@ -164,7 +160,8 @@ export default class DataTable extends Component {
     // TODO: Use the string comparison might be error-prone
     if (this.state.dialogTitle.toLowerCase() == 'add') {
       postUrl = this.props.urls.add;
-      // entries.created_timetamp = currentTime();
+      entries.created_timetamp = currentTime();
+      entries.modified_timestamp = currentTime();
       // Add timestamp
       postData = JSON.stringify(entries);
     } else {

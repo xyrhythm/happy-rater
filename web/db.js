@@ -119,8 +119,10 @@ function updateEntry(tableName, entry, condition, callback) {
 }
 
 function checkLogin(tableName, entry, callback) {
-  const query = mysql.format('SELECT `password` FROM ?? WHERE `account` = ?',
-    [tableName, entry.account]);
+  const query = mysql.format('SELECT `password` FROM ?? WHERE `account` = ?', [
+    tableName,
+    entry.account
+  ]);
   querySql(query, callback);
 }
 
@@ -131,15 +133,18 @@ APIs for rater's view.
 function getTasksForRater(options, callback) {
   const query = mysql.format(
     'SELECT `task_id`, `num_answer` FROM ratertask WHERE `rater_id` = ?',
-    [options.rater_id]);
+    [options.rater_id]
+  );
   querySql(query, callback);
 }
 
 // options = {task_id: , offset: , page_size: }
 function getQuestionsForTask(options, callback) {
-  const query = mysql.format('SELECT `question_id`, `image_url` FROM question' +
-  'WHERE `task_id` = ? LIMIT ? ?',
-  [options.task_id, options.offset, options.page_size]);
+  const query = mysql.format(
+    'SELECT `question_id`, `image_url` FROM question' +
+      'WHERE `task_id` = ? LIMIT ? ?',
+    [options.task_id, options.offset, options.page_size]
+  );
   querySql(query, callback);
 }
 
@@ -149,7 +154,8 @@ function getQuestionsForTask(options, callback) {
 function getAnswersForRaterForTask(options, callback) {
   const query = mysql.format(
     'SELECT `question_id` FROM answer WHERE `rater_id` = ? AND `task_id` = ?',
-    [options.rater_id, options.task_id]);
+    [options.rater_id, options.task_id]
+  );
   querySql(query, callback);
 }
 
@@ -160,7 +166,9 @@ APIs for requester/owner's view.
 function getTasksForRequester(options, callback) {
   const query = mysql.format(
     'SELECT `task_id`, `num_question`, `num_answer_collected` ' +
-    'FROM requestertask WHERE `requester_id` = ?', [options.requester_id]);
+      'FROM requestertask WHERE `requester_id` = ?',
+    [options.requester_id]
+  );
   querySql(query, callback);
 }
 

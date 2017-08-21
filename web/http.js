@@ -27,13 +27,57 @@ app.post('/addTask', insertDataIntoTable('task'));
 app.post('/deleteTask', deleteDataFromTable('task'));
 app.post('/updateTask', updateDataFromTable('task'));
 
-// TODO(fenghaolw): Move login pieces to the correct place.
-app.get('/login', checkLoginForTable('rater'));
-app.get('/loginRequester', checkLoginForTable('requester'));
-app.get('/loginAdmin', checkLoginForTable('admin'));
+const loginTables = ['rater', 'requester', 'admin'];
 
-app.post('/signup', createLoginForTable('rater'));
-app.post('/signupRequester', createLoginForTable('requester'));
+app.post('/login', (req, res) => {
+  const tableName = loginTables[req.body.type - 1];
+  const reqBody = {
+    account: req.body.account,
+    password: req.body.password
+  };
+  db.checkLogin(tableName, reqBody, (err, result) => {
+    if (err) {
+      res.status(500).send({error: err.code});
+    } else {
+      if (result.length < 1) {
+        res.status(500).send({error: 'ACC_NOT_FOUND'});
+      } else {
+        const savedPass = result[0].password;
+        bcrypt.compare(req.body.password, savedPass).then((result) => {
+          if (result) {
+            res.status(200).send({});
+          } else {
+            res.status(500).send({error: 'INCORRECT_PWD'});
+          }
+        });
+      }
+    }
+  });
+});
+
+app.post('/signup', (req, res) => {
+  const tableName = loginTables[req.body.type - 1];
+  const reqBody = req.body;
+  delete reqBody.type;
+  bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+    if (err) {
+      res.status(500).send({error: err.code});
+    } else {
+      reqBody.password = hash;
+      // By default use account as username.
+      if (!reqBody.username) {
+        reqBody.username = reqBody.account;
+      }
+      db.insertEntry(tableName, buildMap(reqBody), (err, result) => {
+        if (err) {
+          res.status(500).send({error: err.code});
+        } else {
+          res.status(200).send({});
+        }
+      });
+    }
+  });
+});
 
 // Always redirect to home page for any other requests.
 // This simplifies the development since we won't need to type the URL.
@@ -97,61 +141,6 @@ function updateDataFromTable(tableName) {
         res.end();
       }
     );
-  };
-}
-
-function checkLoginForTable(tableName) {
-  return (req, res) => {
-    db.checkLogin(tableName, buildMap(req.body), (err, result) => {
-      if (err) {
-        // TODO(fenghaolw): provide better error message.
-        res.writeHead(500);
-      } else {
-        if (result.length < 1) {
-          res.write({code: -1, msg: 'account not found.'});
-        } else {
-          const savedPass = result[0].password;
-          bcrypt.compare(req.body.password, savedPass).then((result) => {
-            if (result) {
-              res.write({code: 0, msg: 'logged in.'});
-            } else {
-              res.write({code: -2, msg: 'wrong password.'});
-            }
-          });
-        }
-      }
-    });
-    res.end();
-  };
-}
-
-// Check whether a provided password meets the requirments.
-function isGoodPassword(password) {
-  return password.length >= 8;
-}
-
-function createLoginForTable(tableName) {
-  return (req, res) => {
-    const providedPass = req.body.password;
-    if (isGoodPassword(providedPass)) {
-      let reqBody = req.body;
-      bcrypt.hash(providedPass, saltRounds, (err, hash) => {
-        if (err) {
-          res.writeHead(500);
-        } else {
-          reqBody.password = hash;
-          db.insertEntry(tableName, buildMap(reqBody), (err, result) => {
-            if (err) {
-              // TODO(fenghaolw): provide better error message.
-              res.writeHead(500);
-            }
-          });
-        }
-      });
-    } else {
-      res.write({code: -1, msg: 'Need a better password.'});
-    }
-    res.end();
   };
 }
 
